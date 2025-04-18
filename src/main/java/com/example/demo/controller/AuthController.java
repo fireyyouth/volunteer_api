@@ -4,29 +4,34 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.util.JwtUtil;
+
+import jakarta.servlet.http.HttpSession;
 
 import java.util.Optional;
-
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
-    private UserRepository userRepository;
+    private AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
-        Optional<User> foundUser = userRepository.findByAccountAndPassword(user.getAccount(), user.getPassword());
-        if (foundUser.isPresent()) {
-            // Implement session or token logic here
-            return ResponseEntity.ok("Login successful");
-        } else {
+    public ResponseEntity<?> login(@RequestBody User user, HttpSession session) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getAccount(), user.getPassword()));
+        } catch (Exception e) {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
+
+        session.setAttribute("account", user.getAccount());
+        return ResponseEntity.ok("Login successful");
     }
 
     @PostMapping("/logout")
