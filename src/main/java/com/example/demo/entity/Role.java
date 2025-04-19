@@ -1,22 +1,21 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Activity {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    @Column(unique = true)
+    private String name;
 
-    @ManyToOne
-    private MyUser creator;
-
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -25,19 +24,11 @@ public class Activity {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public MyUser getCreator() {
-        return creator;
-    }
-
-    public void setCreator(MyUser creator) {
-        this.creator = creator;
+    public void setName(String name) {
+        this.name = name;
     }
 }
