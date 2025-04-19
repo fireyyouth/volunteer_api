@@ -65,6 +65,10 @@
 			<artifactId>spring-session-jdbc</artifactId>
 			<version>3.4.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

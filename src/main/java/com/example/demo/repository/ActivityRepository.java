@@ -8,5 +8,6 @@ import com.example.demo.entity.Activity;
 import com.example.demo.entity.MyUser;
 
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
-    public List<Activity> getActivitiesByCreator(MyUser creator);
+    public List<Activity> findByCreator(MyUser creator);
+    public List<Activity> findActivitiesByParticipants(MyUser participant);
 }

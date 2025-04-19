@@ -5,15 +5,22 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.UserRepository;
 import java.util.Optional;
+import java.util.Set;
+
 import com.example.demo.entity.MyUser;
 import com.example.demo.entity.Activity;
+import org.springframework.data.util.Pair;
 
 @RestController
 @RequestMapping("/activity")
@@ -24,12 +31,64 @@ public class ActivityController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping
+    @GetMapping("/all")
+    public List<Activity> getAllActivities() {
+        return activityRepository.findAll();
+    }
+
+    @GetMapping("/own")
     public List<Activity> getActivities() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String account = auth.getName();
         Optional<MyUser> user = userRepository.findByAccount(account);
-        List<Activity> activities = activityRepository.getActivitiesByCreator(user.get());
-        return activities;
+        return user.get().getActivities();
+    }
+
+    @GetMapping("/joined")
+    public Set<Activity> getJoinedActivities() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String account = auth.getName();
+        Optional<MyUser> user = userRepository.findByAccount(account);
+        return user.get().getJoinedActivities();
+    }
+    
+    @GetMapping("/{id}")
+    public Activity getActivityById(@PathVariable Long id) {
+        return activityRepository.findById(id).orElse(null);
+    }
+
+
+    @PostMapping("/")
+    public Activity createActivity(@RequestBody Activity activityInfo) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String account = auth.getName();
+        Optional<MyUser> user = userRepository.findByAccount(account);
+        Activity activity = new Activity();
+        activity.setCreator(user.get());
+        activity.setTitle(activityInfo.getTitle());
+        activity.setVolunteerCriteria(activityInfo.getVolunteerCriteria());
+        activity.setVolunteerHour(activityInfo.getVolunteerHour());
+        activity.setStartDate(activityInfo.getStartDate());
+        activity.setEndDate(activityInfo.getEndDate());
+        activity.setImageURL(activityInfo.getImageURL());
+        return activityRepository.save(activity);
+    }
+    @PostMapping("/{id}/leave")
+    public Activity leaveActivity(@PathVariable Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String account = auth.getName();
+        Optional<MyUser> user = userRepository.findByAccount(account);
+
+        Activity activity = activityRepository.findById(id).orElse(null);
+        activity.removeParticipant(user.get());
+        activityRepository.save(activity);
+        return activity;
+    }
+
+    @DeleteMapping("/{id}")
+    public Activity deleteActivity(@PathVariable Long id) {
+        Activity activity = activityRepository.findById(id).orElse(null);
+        activityRepository.delete(activity);
+        return activity;
     }
 }

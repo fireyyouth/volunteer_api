@@ -15,10 +15,6 @@ import com.example.demo.service.MyUserDetailsService;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import com.example.demo.cmd.CustomAuthenticationSuccessHandler;
-import com.example.demo.cmd.CustomAuthenticationFailHandler;
-import com.example.demo.cmd.CustomLogoutSuccessHandler;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

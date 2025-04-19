@@ -1,13 +1,15 @@
 package com.example.demo.dto;
 
-public class ActivityResponse {
-    private String title;
+import com.example.demo.entity.Activity;
 
-    public String getTitle() {
-        return title;
+public class ActivityResponse extends Activity {
+    private Long volunteerCount;
+    
+    public Long getVolunteerCount() {
+        return volunteerCount;
     }
-
-    public void setTitle(String title) {
-        this.title = title;
+    
+    public void setVolunteerCount(Long volunteerCount) {
+        this.volunteerCount = volunteerCount;
     }
 }

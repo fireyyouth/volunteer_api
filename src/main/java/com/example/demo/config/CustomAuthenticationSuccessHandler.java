@@ -1,4 +1,4 @@
-package com.example.demo.cmd;
+package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,10 +21,11 @@ import com.example.demo.entity.MyUser;
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     private final UserRepository userRepository;
-
+    private final ObjectMapper objectMapper;
     @Autowired
-    public CustomAuthenticationSuccessHandler(UserRepository userRepository) {
+    public CustomAuthenticationSuccessHandler(UserRepository userRepository, ObjectMapper objectMapper) {
         this.userRepository = userRepository;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -35,7 +36,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Optional<MyUser> myUser = userRepository.findByAccount(user.getUsername());
 
         // Convert UserDetails to JSON using Jackson
-        ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String, Object> r = new HashMap<String, Object>();
         r.put("detail", "登录成功");
         r.put("data", myUser.get());

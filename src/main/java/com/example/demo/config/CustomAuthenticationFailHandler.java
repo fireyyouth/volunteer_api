@@ -1,4 +1,4 @@
-package com.example.demo.cmd;
+package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
