@@ -15,10 +15,22 @@ import com.example.demo.service.MyUserDetailsService;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import com.example.demo.cmd.CustomAuthenticationSuccessHandler;
+import com.example.demo.cmd.CustomAuthenticationFailHandler;
+import com.example.demo.cmd.CustomLogoutSuccessHandler;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final CustomAuthenticationFailHandler customAuthenticationFailHandler;
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
+    public SecurityConfig(CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler, CustomAuthenticationFailHandler customAuthenticationFailHandler, CustomLogoutSuccessHandler customLogoutSuccessHandler) {
+        this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
+        this.customAuthenticationFailHandler = customAuthenticationFailHandler;
+        this.customLogoutSuccessHandler = customLogoutSuccessHandler;
+    }
 
     @Autowired
     private MyUserDetailsService userDetailsService;
@@ -36,7 +48,10 @@ public class SecurityConfig {
             .anyRequest().authenticated()  // Require authentication for other endpoints
         );
         security.csrf(csrf -> csrf.disable());
-        security.formLogin(withDefaults());
+        security.formLogin(form -> form.successHandler(customAuthenticationSuccessHandler)
+            .failureHandler(customAuthenticationFailHandler));
+        security.logout(logout -> logout
+            .logoutSuccessHandler(customLogoutSuccessHandler));
         return security.build();
     }
 }
