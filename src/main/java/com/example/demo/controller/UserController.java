@@ -19,12 +19,17 @@ import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.dto.PasswordRequest;
 import com.example.demo.entity.MyUser;
+import com.example.demo.entity.Role;
+import com.example.demo.repository.RoleRepository;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -37,9 +42,16 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @PostMapping("")
+    @PostMapping("/register")
     public MyUser createUser(@RequestBody MyUser user) {
-        return userRepository.save(user);
+        MyUser newUser = new MyUser();
+        newUser.setAccount(user.getAccount());
+        newUser.setName(user.getName());
+        newUser.setGender(user.getGender());
+        newUser.setEmail(user.getEmail());
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        newUser.getRoles().add(roleRepository.findByName("USER").get());
+        return userRepository.save(newUser);
     }
 
     @DeleteMapping("/{id}")

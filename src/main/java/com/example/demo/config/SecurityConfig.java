@@ -40,7 +40,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         HttpSecurity security = http.authorizeHttpRequests(authz -> authz
-            .requestMatchers("/login",  "/register").permitAll() // Allow unauthenticated access to these URLs
+            .requestMatchers("/login",  "/user/register").permitAll() // Allow unauthenticated access to these URLs
             .anyRequest().authenticated()  // Require authentication for other endpoints
         );
         security.csrf(csrf -> csrf.disable());
