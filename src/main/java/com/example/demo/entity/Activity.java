@@ -67,6 +67,11 @@ public class Activity {
         return creator != null ? creator.getName() : null;
     }
 
+    @JsonProperty("isFinished")
+    public boolean getIsFinished() {
+        return endDate.isBefore(LocalDate.now());
+    }
+
     public void addParticipant(MyUser user) {
         participants.add(user);
         user.getJoinedActivities().add(this);
@@ -99,6 +104,7 @@ public class Activity {
 
     public void setCreator(MyUser creator) {
         this.creator = creator;
+        creator.getActivities().add(this);
     }
     public String getImageURL() {
         return imageURL;

@@ -20,10 +20,12 @@ import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.UserRepository;
 import java.util.Optional;
 import com.example.demo.entity.MyUser;
+import com.example.demo.dto.ErrorDetail;
 import com.example.demo.entity.Activity;
 import com.example.demo.entity.Apply;
 
 import org.springframework.data.util.Pair;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -59,36 +61,55 @@ public class ApplyController {
     @PutMapping("/{id}")
     public Apply updateStatus(@PathVariable Long id, @RequestParam(value = "status", required = true) String status) {
         Apply apply = applyRepository.findById(id).orElse(null);
-        if (!apply.getStatus().equals("created")) {
+        if (!apply.getStatus().equals("待审核")) {
             return apply;
         }
         apply.setStatus(status);
         applyRepository.save(apply);
-        if (status.equals("approved")) {
-            if (apply.getKind().equals("join")) {
+
+        if (apply.getKind().equals("参加")) {
+            if (status.equals("已通过")) {
                 Activity activity = activityRepository.findById(apply.getActivity().getId()).orElse(null);
                 activity.addParticipant(apply.getUser());
                 activityRepository.save(activity);
-            } else if (apply.getKind().equals("host")) {
+            } else if (status.equals("未通过")) {
                 Activity activity = activityRepository.findById(apply.getActivity().getId()).orElse(null);
-                activity.setStatus("approved");
+                activity.removeParticipant(apply.getUser());
                 activityRepository.save(activity);
             }
+        } else if (apply.getKind().equals("举办")) {
+            Activity activity = activityRepository.findById(apply.getActivity().getId()).orElse(null);
+            activity.setStatus(status);
+            activityRepository.save(activity);
         }
         return apply;
     }
     
     @PostMapping(value = "/", consumes = "application/json")
-    public Apply createApply(@RequestBody Apply applyInfo) {
+    public ResponseEntity<?> createApply(@RequestBody Apply applyInfo) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String account = auth.getName();
         Optional<MyUser> user = userRepository.findByAccount(account);
+
+        if (applyInfo.getKind().equals("参加")) {
+            Activity activity = activityRepository.findById(applyInfo.getActivity().getId()).orElse(null);
+            if (!activity.getStatus().equals("已通过")) {
+                return ResponseEntity.badRequest().body(new ErrorDetail("活动未审核"));
+            }
+            if (activity.getParticipants().contains(user.get())) {
+                return ResponseEntity.badRequest().body(new ErrorDetail("不能重复报名"));
+            }
+        } else if (applyInfo.getKind().equals("举办")) {
+            Activity activity = activityRepository.findById(applyInfo.getActivity().getId()).orElse(null);
+            if (activity.getStatus().equals("已通过")) {
+                return ResponseEntity.badRequest().body(new ErrorDetail("已经审核过"));
+            }
+        }
         Apply apply = new Apply();
         apply.setUser(user.get());
         apply.setActivity(activityRepository.findById(applyInfo.getActivity().getId()).orElse(null));
         apply.setKind(applyInfo.getKind());
-        apply.setStatus("created");
-        return applyRepository.save(apply);
+        return ResponseEntity.ok(applyRepository.save(apply));
     }
 
     @DeleteMapping("/{id}")

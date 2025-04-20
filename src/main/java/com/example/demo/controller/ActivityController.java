@@ -37,7 +37,7 @@ public class ActivityController {
     }
 
     @GetMapping("/own")
-    public List<Activity> getActivities() {
+    public Set<Activity> getActivities() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String account = auth.getName();
         Optional<MyUser> user = userRepository.findByAccount(account);

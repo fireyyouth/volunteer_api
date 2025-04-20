@@ -31,7 +31,7 @@ public class Apply {
     @UpdateTimestamp
     private Instant lastUpdatedOn;
 
-    private String status;
+    private String status = "待审核";
 
     public Long getId() {
         return id;

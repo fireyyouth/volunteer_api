@@ -57,7 +57,7 @@ public class DataInitializer implements CommandLineRunner {
         MyUser user01 = new MyUser();
         user01.setAccount("frank");
         user01.setName("frank");
-        user01.setGender("male");
+        user01.setGender("男");
         user01.setEmail("frank@foo.com");
         user01.setPassword(passwordEncoder.encode("frank"));
         user01.getRoles().add(userRole);
@@ -66,7 +66,7 @@ public class DataInitializer implements CommandLineRunner {
         MyUser user02 = new MyUser();
         user02.setAccount("peter");
         user02.setName("peter");
-        user02.setGender("male");
+        user02.setGender("男");
         user02.setEmail("peter@foo.com");
         user02.setPassword(passwordEncoder.encode("peter"));
         user02.getRoles().add(userRole);
@@ -98,7 +98,7 @@ public class DataInitializer implements CommandLineRunner {
         int i = 1;
         for (String imageUrl : imageUrlList) {
             Activity activity = new Activity();
-            activity.setStatus("approved");
+            activity.setStatus("已通过");
             activity.setTitle("Activity " + i);
             if (i % 2 == 0) {
                 activity.setCreator(user01);
@@ -120,5 +120,6 @@ public class DataInitializer implements CommandLineRunner {
             activityRepository.save(activity);
             i += 1;
         }
+
     }
 }

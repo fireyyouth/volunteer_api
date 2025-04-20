@@ -54,7 +54,7 @@ public class MyUser {
     
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JsonIdentityReference(alwaysAsId = true)
-    List<Activity> activities;
+    Set<Activity> activities = new HashSet<>();
 
     @ManyToMany(mappedBy = "participants", fetch = FetchType.EAGER)
     @JsonIdentityReference(alwaysAsId = true)
@@ -65,8 +65,8 @@ public class MyUser {
     public int getVolunteerHour() {
         int total = 0;
         for (Activity activity : joinedActivities) {
-            // 审批通过且活动结束
-            if (activity.getStatus().equals("approved") && activity.getEndDate().isBefore(LocalDate.now())) {
+            // 审核通过且活动结束
+            if (activity.getStatus().equals("已通过") && activity.getIsFinished()) {
                 total += activity.getVolunteerHour();
             }
         }
@@ -139,10 +139,10 @@ public class MyUser {
         this.email = email;
     }
 
-    public List<Activity> getActivities() {
+    public Set<Activity> getActivities() {
         return activities;
     }
-    public void setActivities(List<Activity> activities) {
+    public void setActivities(Set<Activity> activities) {
         this.activities = activities;
     }
     public Set<Activity> getJoinedActivities() {
