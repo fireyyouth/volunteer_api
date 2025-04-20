@@ -57,9 +57,9 @@ public class Activity {
     @JsonIdentityReference(alwaysAsId = true)
     private Set<MyUser> participants = new HashSet<>();
 
-    private String status = "created";
+    private String status = "待审核";
 
-    private int volunteerHour = 0;
+    private int volunteerHour = -1;
 
     
     @JsonProperty("creatorName")
@@ -69,7 +69,7 @@ public class Activity {
 
     @JsonProperty("isFinished")
     public boolean getIsFinished() {
-        return endDate.isBefore(LocalDate.now());
+        return volunteerHour > 0;
     }
 
     public void addParticipant(MyUser user) {

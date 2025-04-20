@@ -61,9 +61,6 @@ public class ApplyController {
     @PutMapping("/{id}")
     public Apply updateStatus(@PathVariable Long id, @RequestParam(value = "status", required = true) String status) {
         Apply apply = applyRepository.findById(id).orElse(null);
-        if (!apply.getStatus().equals("待审核")) {
-            return apply;
-        }
         apply.setStatus(status);
         applyRepository.save(apply);
 
