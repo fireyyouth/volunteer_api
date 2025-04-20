@@ -67,11 +67,6 @@ public class Activity {
         return creator != null ? creator.getName() : null;
     }
 
-    @JsonProperty("isFinished")
-    public boolean getIsFinished() {
-        return volunteerHour > 0;
-    }
-
     public void addParticipant(MyUser user) {
         participants.add(user);
         user.getJoinedActivities().add(this);

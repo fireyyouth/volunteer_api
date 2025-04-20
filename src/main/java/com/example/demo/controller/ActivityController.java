@@ -96,6 +96,9 @@ public class ActivityController {
         if (activityInfo.getImageURL() != null) {
             activity.setImageURL(activityInfo.getImageURL());
         }
+        if (activityInfo.getStatus() != null) {
+            activity.setStatus(activityInfo.getStatus());
+        }
         return activityRepository.save(activity);
     }
 

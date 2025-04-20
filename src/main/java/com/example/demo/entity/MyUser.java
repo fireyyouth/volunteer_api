@@ -60,13 +60,12 @@ public class MyUser {
     @JsonIdentityReference(alwaysAsId = true)
     private Set<Activity> joinedActivities = new HashSet<>();
 
-    
+
     @JsonProperty("volunteerHour")
     public int getVolunteerHour() {
         int total = 0;
         for (Activity activity : joinedActivities) {
-            // 审核通过且活动结束
-            if (activity.getStatus().equals("已通过") && activity.getIsFinished()) {
+            if (activity.getStatus().equals("已完成")) {
                 total += activity.getVolunteerHour();
             }
         }
