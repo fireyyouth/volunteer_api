@@ -20,8 +20,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.example.demo.entity.MyUser;
+import com.example.demo.dto.ErrorDetail;
 import com.example.demo.entity.Activity;
 import org.springframework.data.util.Pair;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/activity")
@@ -58,12 +60,12 @@ public class ActivityController {
         return activityRepository.findById(id).orElse(null);
     }
 
-
     @PostMapping("/")
-    public Activity createActivity(@RequestBody Activity activityInfo) {
+    public ResponseEntity<?> createActivity(@RequestBody Activity activityInfo) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String account = auth.getName();
         Optional<MyUser> user = userRepository.findByAccount(account);
+
         Activity activity = new Activity();
         activity.setCreator(user.get());
         activity.setTitle(activityInfo.getTitle());
@@ -72,7 +74,11 @@ public class ActivityController {
         activity.setStartDate(activityInfo.getStartDate());
         activity.setEndDate(activityInfo.getEndDate());
         activity.setImageURL(activityInfo.getImageURL());
-        return activityRepository.save(activity);
+        try {
+            return ResponseEntity.ok(activityRepository.save(activity));
+        } catch(org.springframework.dao.DataIntegrityViolationException e) {
+            return ResponseEntity.badRequest().body(new ErrorDetail("活动标题已存在"));
+        }
     }
 
     @PutMapping("/{id}")

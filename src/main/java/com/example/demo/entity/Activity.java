@@ -17,6 +17,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -29,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
   generator = ObjectIdGenerators.PropertyGenerator.class,
   property = "id")
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "title" }))
 public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
