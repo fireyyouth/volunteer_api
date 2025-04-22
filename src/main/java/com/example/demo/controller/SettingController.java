@@ -22,7 +22,7 @@ public class SettingController {
     }
 
     @PutMapping("/")
-    public void updateSetting(@RequestBody Setting settingInfo) {
-        settingService.updateSetting(settingInfo);
+    public Setting updateSetting(@RequestBody Setting settingInfo) {
+        return settingService.updateSetting(settingInfo);
     }
 }

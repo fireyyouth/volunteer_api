@@ -14,9 +14,9 @@ public class SettingService {
         return settingRepository.findAll().get(0);
     }
 
-    public void updateSetting(Setting settingInfo) {
+    public Setting updateSetting(Setting settingInfo) {
         Setting setting = settingRepository.findAll().get(0);
         setting.setHostHourRequirement(settingInfo.getHostHourRequirement());
-        settingRepository.save(setting);
+        return settingRepository.save(setting);
     }
 }
