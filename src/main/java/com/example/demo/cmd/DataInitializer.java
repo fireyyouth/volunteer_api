@@ -12,9 +12,12 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.RoleRepository;
+import com.example.demo.repository.SettingRepository;
 import com.example.demo.entity.Activity;
 import com.example.demo.entity.MyUser;
 import com.example.demo.entity.Role;
+import com.example.demo.entity.Setting;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.demo.repository.ActivityRepository;
 
@@ -32,6 +35,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private ActivityRepository activityRepository;
+
+    @Autowired
+    private SettingRepository settingRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -179,5 +185,10 @@ public class DataInitializer implements CommandLineRunner {
             activityRepository.save(activity);
             i += 1;
         }
+
+
+        Setting setting = new Setting();
+        setting.setHostHourRequirement(20);
+        settingRepository.save(setting);
     }
 }

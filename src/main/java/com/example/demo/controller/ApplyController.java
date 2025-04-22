@@ -18,8 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.ApplyRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.SettingService;
+
 import java.util.Optional;
 import com.example.demo.entity.MyUser;
+import com.example.demo.entity.Setting;
 import com.example.demo.dto.ErrorDetail;
 import com.example.demo.entity.Activity;
 import com.example.demo.entity.Apply;
@@ -39,6 +42,9 @@ public class ApplyController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    SettingService settingService;
 
     @GetMapping("/all")
     public List<Apply> getAllActivities() {
@@ -97,6 +103,11 @@ public class ApplyController {
                 return ResponseEntity.badRequest().body(new ErrorDetail("不能重复报名"));
             }
         } else if (applyInfo.getKind().equals("举办")) {
+            Setting setting = settingService.getSetting();
+            if (user.get().getVolunteerHour() < setting.getHostHourRequirement()) {
+                return ResponseEntity.badRequest().body(new ErrorDetail("用户志愿时长不足"));
+            }
+
             Activity activity = activityRepository.findById(applyInfo.getActivity().getId()).orElse(null);
             if (activity.getStatus().equals("已通过")) {
                 return ResponseEntity.badRequest().body(new ErrorDetail("已经审核过"));
